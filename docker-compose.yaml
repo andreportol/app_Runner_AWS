@@ -1,0 +1,79 @@
+version: '2.26'
+
+services:
+  nginx: # Nome do serviço
+    build: # construindo a imagem a partir do arquivo dockerfile
+      dockerfile: ./docker/nginx.dockerfile
+      context: . # local onde vai ser construída a imagem
+    image: andreportol/nginx_fusion:v1
+    container_name: nginx
+    ports: 
+      - "8080:80" # expor as portas de acesso
+    networks:
+      - nwfusion
+    depends_on:
+      - fusion1
+      - fusion2
+      - fusion3
+  pgfusion:
+    build:
+      dockerfile: ./docker/pgfusion.dockerfile
+      context: .
+    image: andreportol/pgfusion:v1
+    container_name: pgfusion
+    ports:
+      - "5432"
+    networks:
+      - nwfusion
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+  
+  fusion1:
+    build: 
+      dockerfile: ./docker/fusion.dockerfile
+      context: .
+    image: andreportol/fusion:v1
+    container_name: fusion1
+    ports:
+      -  "8000"
+    networks:
+      - nwfusion
+    depends_on:
+      - pgfusion
+  
+  fusion2:
+    build: 
+      dockerfile: ./docker/fusion.dockerfile
+      context: .
+    image: andreportol/fusion:v1
+    container_name: fusion2
+    ports:
+      -  "8000"
+    networks:
+      - nwfusion
+    depends_on:
+      - pgfusion
+
+  fusion3:
+    build: 
+      dockerfile: ./docker/fusion.dockerfile
+      context: .
+    image: andreportol/fusion:v1
+    container_name: fusion3
+    ports:
+      -  "8000"
+    networks:
+      - nwfusion
+    depends_on:
+      - pgfusion
+
+networks:
+  nwfusion:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.20.0.0/22
+
+volumes:
+  pgdata:
