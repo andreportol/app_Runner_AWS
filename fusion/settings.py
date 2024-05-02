@@ -25,7 +25,7 @@ SECRET_KEY = '6c84000n*5423ov#u9h6f@&+%1ph4rxi(t1!83z+1u@(%2hh!6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.awsapprunner.com']
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,10 +128,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR, 'staticfiles'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STORAGES = {
+    "default":{
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles":{
+        "BACKEND": "whitenoise.storage.compressedManifestStaticFilesStorage",
+    },
+}
 
 # Email teste console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
